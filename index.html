@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detection</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Fake News Detection</h1>
+        <textarea id="newsInput" placeholder="Enter news article here..."></textarea>
+        <button onclick="checkNews()">Check News</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        async function checkNews() {
+            const text = document.getElementById('newsInput').value;
+            if (!text) {
+                alert('Please enter some text.');
+                return;
+            }
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text })
+            });
+
+            const data = await response.json();
+            const resultDiv = document.getElementById('result');
+            if (data.error) {
+                resultDiv.textContent = `Error: ${data.error}`;
+                resultDiv.style.color = 'red';
+            } else {
+                resultDiv.textContent = `Prediction: ${data.prediction}`;
+                resultDiv.style.color = 'green';
+            }
+        }
+    </script>
+</body>
+</html>
